@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celebrities Database</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="header-top">
+
+  <a href="index.html" class="home-btn">
+    🏠 Home
+  </a>
+
+  <h1>Celebrities Database by BastianPM</h1>
+
+  <a
+  href="favorites.html"
+  class="home-btn"
+>
+  ❤️ Favorites
+</a>
+<a
+  href="birthdays.html"
+  class="home-btn"
+>
+  🎂 Find Birthdays
+</a>
+
+</div>
+
+    <input type="text" id="search" placeholder="Buscar celebridad...">
+
+<a href="list.html" class="home-btn">
+  📋 All Celebrities
+</a>
+<a
+  href="occupations.html"
+  class="home-btn"
+>
+  🎭 Occupations
+</a>
+<a
+  href="zodiac.html"
+  class="home-btn"
+>
+  ♈ Zodiac Signs
+</a>
+<a
+  href="countries.html"
+  class="home-btn"
+>
+  🌍 Countries
+</a>
+<a
+  href="children.html"
+  class="home-btn"
+>
+  👶 Children
+</a>
+  </header>
+
+  <main>
+
+<section>
+  <h2 class="section-title">
+    🎲 Random Celebrities
+  </h2>
+
+  <div id="grid"></div>
+</section>
+
+  <section>
+    <h2 class="section-title">Birthdays Today</h2>
+    <div id="birthdays" class="horizontal-grid"></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Recently Deceased</h2>
+    <div id="deceased" class="horizontal-grid"></div>
+  </section>
+
+<section>
+  <h2 class="section-title">
+    👶 Youngest Celebrities
+  </h2>
+
+  <div id="youngest" class="horizontal-grid"></div>
+</section>
+
+<section>
+  <h2 class="section-title">
+    👴 Oldest Celebrities
+  </h2>
+
+  <div id="oldest" class="horizontal-grid"></div>
+</section>
+
+</main>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
