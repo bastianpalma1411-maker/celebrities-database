@@ -345,3 +345,11 @@ main{
   flex-wrap:wrap;
   gap:20px;
 }
+
+.birthplace-flag{
+  width: 24px;
+  height: auto;
+  vertical-align: middle;
+  margin-right: 6px;
+  border-radius: 3px;
+}

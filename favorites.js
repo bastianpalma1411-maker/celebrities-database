@@ -38,10 +38,8 @@ else{
       >
 
         <img
-          loading="lazy"
-          src="
-https://drive.google.com/thumbnail?id=${celeb.URL.split('id=')[1]}"
-        >
+  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+>
 
         <p>${celeb.Name}</p>
 

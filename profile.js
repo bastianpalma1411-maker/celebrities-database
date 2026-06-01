@@ -9,6 +9,91 @@ const url =
 
 let celeb;
 
+const countryFlags = {
+
+  "Argentina":"🇦🇷",
+  "Australia":"🇦🇺",
+  "Austria":"🇦🇹",
+  "Barbados":"🇧🇧",
+  "Belgium":"🇧🇪",
+  "Benin":"🇧🇯",
+  "Bermuda":"🇧🇲",
+  "Brazil":"🇧🇷",
+  "Bulgaria":"🇧🇬",
+  "Cameroon":"🇨🇲",
+  "Canada":"🇨🇦",
+  "Chile":"🇨🇱",
+  "China":"🇨🇳",
+  "Colombia":"🇨🇴",
+  "Croatia":"🇭🇷",
+  "Cuba":"🇨🇺",
+  "Czech Republic":"🇨🇿",
+  "Denmark":"🇩🇰",
+  "Egypt":"🇪🇬",
+  "England":"🏴",
+  "France":"🇫🇷",
+  "Georgia":"🇬🇪",
+  "Germany":"🇩🇪",
+  "Guatemala":"🇬🇹",
+  "Hong Kong":"🇭🇰",
+  "Iceland":"🇮🇸",
+  "India":"🇮🇳",
+  "Ireland":"🇮🇪",
+  "Israel":"🇮🇱",
+  "Italy":"🇮🇹",
+  "Ivory Coast":"🇨🇮",
+  "Jamaica":"🇯🇲",
+  "Japan":"🇯🇵",
+  "Jersey":"🇯🇪",
+  "Kosovo":"🇽🇰",
+  "Lebanon":"🇱🇧",
+  "Malaysia":"🇲🇾",
+  "Mexico":"🇲🇽",
+  "Monaco":"🇲🇨",
+  "Morocco":"🇲🇦",
+  "Netherlands":"🇳🇱",
+  "New Zealand":"🇳🇿",
+  "Nigeria":"🇳🇬",
+  "North Macedonia":"🇲🇰",
+  "Northern Ireland":"🏴",
+  "Norway":"🇳🇴",
+  "Oman":"🇴🇲",
+  "Pakistan":"🇵🇰",
+  "Panama":"🇵🇦",
+  "Philippines":"🇵🇭",
+  "Poland":"🇵🇱",
+  "Portugal":"🇵🇹",
+  "Puerto Rico":"🇵🇷",
+  "Romania":"🇷🇴",
+  "Russia":"🇷🇺",
+  "Scotland":"🏴",
+  "Serbia":"🇷🇸",
+  "Singapore":"🇸🇬",
+  "Slovakia":"🇸🇰",
+  "Slovenia":"🇸🇮",
+  "South Africa":"🇿🇦",
+  "South Korea":"🇰🇷",
+  "Spain":"🇪🇸",
+  "Sudan":"🇸🇩",
+  "Sweden":"🇸🇪",
+  "Switzerland":"🇨🇭",
+  "Taiwan":"🇹🇼",
+  "Trinidad and Tobago":"🇹🇹",
+  "Turkey":"🇹🇷",
+  "Ukraine":"🇺🇦",
+  "United States":"🇺🇸",
+  "Uruguay":"🇺🇾",
+  "Vietnam":"🇻🇳",
+  "Wales":"🏴",
+  "Zanzibar":"🇹🇿",
+  "Algeria":"🇩🇿",
+  "Ethiopia":"🇪🇹",
+  "Finland":"🇫🇮",
+  "Greece":"🇬🇷",
+  "Haiti":"🇭🇹",
+  "Isle of Man":"🇮🇲"
+};
+
 // GET ID FROM URL
 const params =
   new URLSearchParams(
@@ -69,9 +154,8 @@ function renderProfile(celeb){
     <div class="profile-container">
 
       <img
-        class="profile-img"
-        src="https://drive.google.com/thumbnail?id=${celeb.URL.split('id=')[1]}"
-      >
+  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+>
 
       <div class="profile-info">
 
@@ -104,6 +188,22 @@ function renderProfile(celeb){
           <strong>Occupation:</strong>
           ${celeb.Occupation}
         </p>
+
+        <p>
+  <strong>Birth Place:</strong>
+
+  ${
+    celeb.BirthPlace
+      ? `
+        <img
+          class="birthplace-flag"
+          src="https://flagcdn.com/24x18/${getCountryCode(celeb.BirthPlace)}.png"
+        >
+        ${celeb.BirthPlace}
+      `
+      : "—"
+  }
+</p>
 
         <p>
           <strong>Children:</strong>
@@ -173,4 +273,95 @@ function renderProfile(celeb){
       );
     }
   );
+}
+
+function getCountryCode(country){
+
+  const codes = {
+
+    "Argentina":"ar",
+    "Australia":"au",
+    "Austria":"at",
+    "Barbados":"bb",
+    "Belgium":"be",
+    "Benin":"bj",
+    "Bermuda":"bm",
+    "Brazil":"br",
+    "Bulgaria":"bg",
+    "Cameroon":"cm",
+    "Canada":"ca",
+    "Chile":"cl",
+    "China":"cn",
+    "Colombia":"co",
+    "Croatia":"hr",
+    "Cuba":"cu",
+    "Czech Republic":"cz",
+    "Denmark":"dk",
+    "Egypt":"eg",
+    "England":"gb",
+    "France":"fr",
+    "Georgia":"ge",
+    "Germany":"de",
+    "Guatemala":"gt",
+    "Hong Kong":"hk",
+    "Iceland":"is",
+    "India":"in",
+    "Ireland":"ie",
+    "Israel":"il",
+    "Italy":"it",
+    "Ivory Coast":"ci",
+    "Jamaica":"jm",
+    "Japan":"jp",
+    "Jersey":"je",
+    "Kosovo":"xk",
+    "Lebanon":"lb",
+    "Malaysia":"my",
+    "Mexico":"mx",
+    "Monaco":"mc",
+    "Morocco":"ma",
+    "Netherlands":"nl",
+    "New Zealand":"nz",
+    "Nigeria":"ng",
+    "North Macedonia":"mk",
+    "Northern Ireland":"gb-nir",
+    "Norway":"no",
+    "Oman":"om",
+    "Pakistan":"pk",
+    "Panama":"pa",
+    "Philippines":"ph",
+    "Poland":"pl",
+    "Portugal":"pt",
+    "Puerto Rico":"pr",
+    "Romania":"ro",
+    "Russia":"ru",
+    "Scotland":"gb-sct",
+    "Serbia":"rs",
+    "Singapore":"sg",
+    "Slovakia":"sk",
+    "Slovenia":"si",
+    "South Africa":"za",
+    "South Korea":"kr",
+    "Spain":"es",
+    "Sudan":"sd",
+    "Sweden":"se",
+    "Switzerland":"ch",
+    "Taiwan":"tw",
+    "Trinidad and Tobago":"tt",
+    "Turkey":"tr",
+    "Ukraine":"ua",
+    "United States":"us",
+    "Uruguay":"uy",
+    "Vietnam":"vn",
+    "Wales":"gb-wls",
+    "Zanzibar":"tz",
+    "Algeria":"dz",
+    "Ethiopia":"et",
+    "Finland":"fi",
+    "Greece":"gr",
+    "Haiti":"ht",
+    "Isle of Man":"im"
+
+  };
+
+  return codes[country] || "un";
 }

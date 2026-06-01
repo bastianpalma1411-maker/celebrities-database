@@ -162,10 +162,8 @@ function renderCelebrities(
       >
 
         <img
-          loading="lazy"
-          src="
-https://drive.google.com/thumbnail?id=${celeb.URL.split('id=')[1]}"
-        >
+  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+>
 
         <div class="card-info">
 
@@ -296,10 +294,8 @@ function renderSpecialSection(
       >
 
         <img
-          loading="lazy"
-          src="
-https://drive.google.com/thumbnail?id=${celeb.URL.split('id=')[1]}"
-        >
+  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+>
 
         <div class="card-info">
 

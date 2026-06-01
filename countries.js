@@ -54,7 +54,6 @@ const countryFlags = {
   "New Zealand":"🇳🇿",
   "Nigeria":"🇳🇬",
   "North Macedonia":"🇲🇰",
-  "Northern Ireland":"🇬🇧",
   "Oman":"🇴🇲",
   "Panama":"🇵🇦",
   "Philippines":"🇵🇭",
@@ -82,7 +81,16 @@ const countryFlags = {
   "Uruguay":"🇺🇾",
   "Vietnam":"🇻🇳",
   "Wales":"🏴",
-  "Zanzibar":"🇹🇿"
+  "Zanzibar":"🇹🇿",
+  "Algeria":"🇩🇿",
+  "Ethiopia":"🇪🇹",
+  "Finland":"🇫🇮",
+  "Greece":"🇬🇷",
+  "Haiti":"🇭🇹",
+  "Isle of Man":"🇮🇲",
+  "Norway":"🇳🇴",
+  "Pakistan":"🇵🇰",
+  "Northern Ireland":"🏴",
 };
 
 fetch(url)
@@ -197,10 +205,8 @@ https://flagcdn.com/24x18/${getCountryCode(country)}.png
       >
 
         <img
-          loading="lazy"
-          src="
-https://drive.google.com/thumbnail?id=${celeb.URL.split('id=')[1]}"
-        >
+  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+>
 
         <p>
           ${celeb.Name}
@@ -277,7 +283,7 @@ function getCountryCode(
     "New Zealand":"nz",
     "Nigeria":"ng",
     "North Macedonia":"mk",
-    "Northern Ireland":"gb",
+    "Northern Ireland":"gb-nir",
     "Oman":"om",
     "Panama":"pa",
     "Philippines":"ph",
@@ -305,7 +311,15 @@ function getCountryCode(
     "Uruguay":"uy",
     "Vietnam":"vn",
     "Wales":"gb",
-    "Zanzibar":"tz"
+    "Zanzibar":"tz",
+    "Algeria":"dz",
+    "Ethiopia":"et",
+    "Finland":"fi",
+    "Greece":"gr",
+    "Haiti":"ht",
+    "Isle of Man":"im",
+    "Norway":"no",
+    "Pakistan":"pk",
   };
 
   return codes[country]
