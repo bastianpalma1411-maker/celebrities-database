@@ -30,7 +30,7 @@ const countryFlags = {
   "Czech Republic":"🇨🇿",
   "Denmark":"🇩🇰",
   "Egypt":"🇪🇬",
-  "England":"🏴",
+  "England":"gb-eng",
   "France":"🇫🇷",
   "Georgia":"🇬🇪",
   "Germany":"🇩🇪",
@@ -55,7 +55,7 @@ const countryFlags = {
   "New Zealand":"🇳🇿",
   "Nigeria":"🇳🇬",
   "North Macedonia":"🇲🇰",
-  "Northern Ireland":"🏴",
+  "Northern Ireland":"gb-nir",
   "Norway":"🇳🇴",
   "Oman":"🇴🇲",
   "Pakistan":"🇵🇰",
@@ -66,7 +66,7 @@ const countryFlags = {
   "Puerto Rico":"🇵🇷",
   "Romania":"🇷🇴",
   "Russia":"🇷🇺",
-  "Scotland":"🏴",
+  "Scotland":"gb-sct",
   "Serbia":"🇷🇸",
   "Singapore":"🇸🇬",
   "Slovakia":"🇸🇰",
@@ -84,14 +84,20 @@ const countryFlags = {
   "United States":"🇺🇸",
   "Uruguay":"🇺🇾",
   "Vietnam":"🇻🇳",
-  "Wales":"🏴",
+  "Wales":"gb-wls",
   "Zanzibar":"🇹🇿",
   "Algeria":"🇩🇿",
   "Ethiopia":"🇪🇹",
   "Finland":"🇫🇮",
   "Greece":"🇬🇷",
   "Haiti":"🇭🇹",
-  "Isle of Man":"🇮🇲"
+  "Isle of Man":"🇮🇲",
+  "Dominican Republic":"🇩🇴",
+  "Gibraltar":"🇬🇮",
+  "Iran":"🇮🇷",
+  "Namibia":"🇳🇦",
+  "Somalia":"🇸🇴",
+  "Venezuela":"🇻🇪",
 };
 
 // GET ID FROM URL
@@ -141,6 +147,11 @@ fetch(url)
   }
 
   renderProfile(celeb);
+
+loadStarPower(
+  celeb.ID
+);
+
 });
 
 // RENDER PROFILE
@@ -153,11 +164,40 @@ function renderProfile(celeb){
   
     <div class="profile-container">
 
-      <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
->
+  <div class="left-column">
 
-      <div class="profile-info">
+  <img
+    class="profile-img"
+    src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+  >
+
+  <div class="star-power-box">
+
+    <h3>⭐ Star Power</h3>
+
+    <p id="starPowerCount">
+      0 points
+    </p>
+
+    <button
+      id="boostBtn"
+      onclick="increaseStarPower()"
+    >
+      ⭐ Boost
+    </button>
+
+    <button
+      id="removeBoostBtn"
+      onclick="decreaseStarPower()"
+    >
+      ➖ Remove
+    </button>
+
+  </div>
+
+</div>
+
+  <div class="profile-info">
 
         <h1>${celeb.Name}</h1>
 
@@ -298,7 +338,7 @@ function getCountryCode(country){
     "Czech Republic":"cz",
     "Denmark":"dk",
     "Egypt":"eg",
-    "England":"gb",
+    "England":"gb-eng",
     "France":"fr",
     "Georgia":"ge",
     "Germany":"de",
@@ -359,9 +399,91 @@ function getCountryCode(country){
     "Finland":"fi",
     "Greece":"gr",
     "Haiti":"ht",
-    "Isle of Man":"im"
-
+    "Isle of Man":"im",
+    "Dominican Republic":"do",
+    "Gibraltar":"gi",
+    "Iran":"ir",
+    "Namibia":"na",
+    "Somalia":"so",
+    "Venezuela":"ve",
   };
 
   return codes[country] || "un";
+}
+
+// STAR POWER
+
+let currentCelebrityId = null;
+
+function loadStarPower(id){
+
+  currentCelebrityId = id;
+
+  const powers =
+    JSON.parse(
+      localStorage.getItem(
+        "starPowers"
+      )
+    ) || {};
+
+  const points =
+    powers[id] || 0;
+
+  document.getElementById(
+    "starPowerCount"
+  ).textContent =
+    `${points} points`;
+}
+
+function increaseStarPower(){
+
+  const powers =
+    JSON.parse(
+      localStorage.getItem(
+        "starPowers"
+      )
+    ) || {};
+
+  powers[currentCelebrityId] =
+    (powers[currentCelebrityId] || 0)
+    + 1;
+
+  localStorage.setItem(
+    "starPowers",
+    JSON.stringify(powers)
+  );
+
+  loadStarPower(
+    currentCelebrityId
+  );
+}
+
+function decreaseStarPower(){
+
+  const powers =
+    JSON.parse(
+      localStorage.getItem(
+        "starPowers"
+      )
+    ) || {};
+
+  if(
+    !powers[currentCelebrityId]
+    ||
+    powers[currentCelebrityId]
+    <= 0
+  ){
+    return;
+  }
+
+  powers[currentCelebrityId]--;
+
+  localStorage.setItem(
+    "starPowers",
+    JSON.stringify(powers)
+  );
+
+  loadStarPower(
+    currentCelebrityId
+  );
 }

@@ -390,3 +390,11 @@ function renderSpecialSection(
   container.innerHTML =
     html;
 }
+
+function toggleMenu(){
+
+  document
+    .getElementById("menu")
+    .classList
+    .toggle("active");
+}
