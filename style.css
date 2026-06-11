@@ -599,3 +599,71 @@ main{
 #removeBoostBtn:hover{
   transform:scale(1.05);
 }
+
+/* HAMBURGER MENU */
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.menu{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  align-items:center;
+}
+
+.menu-toggle{
+  display:none;
+  background:#222;
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px){
+
+  .menu-toggle{
+    display:block;
+  }
+
+  .menu{
+    display:none;
+    flex-direction:column;
+    width:100%;
+    margin-top:20px;
+    gap:12px;
+  }
+
+  .menu.active{
+    display:flex;
+  }
+
+  #search{
+    width:90%;
+    max-width:none;
+  }
+
+  .home-btn{
+    width:90%;
+    text-align:center;
+  }
+
+  .top-bar{
+    flex-direction:column;
+    text-align:center;
+  }
+
+  h1{
+    font-size:24px;
+  }
+}
