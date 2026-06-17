@@ -12,9 +12,7 @@ fetch(url)
 .then(data => {
 
   const container =
-    document.getElementById(
-      "zodiacButtons"
-    );
+    document.getElementById("zodiacButtons");
 
   const uniqueSigns =
     [...new Set(
@@ -26,63 +24,59 @@ fetch(url)
 
   let html = "";
 
-  uniqueSigns
-  .forEach(sign => {
+  uniqueSigns.forEach(sign => {
 
     html += `
       <button
         class="occupation-btn"
-        onclick="
-          filterZodiac(
-            '${sign.replace(/'/g,"\\'")}'
-          )
-        "
+        onclick="filterZodiac('${sign.replace(/'/g,"\\'")}')"
       >
         ${sign}
       </button>
     `;
   });
 
-  container.innerHTML =
-    html;
+  container.innerHTML = html;
 
-  window.allCelebrities =
-    data;
+  window.allCelebrities = data;
 });
 
-function filterZodiac(
-  sign
-){
 
-  // HIDE BUTTONS
-  document.getElementById(
-    "zodiacButtons"
-  ).style.display =
-    "none";
+// ✅ FIX: función que te faltaba
+function getImageId(url) {
+  if (!url) return "";
+
+  // Si ya viene un ID directo de Google Drive
+  if (url.includes("drive.google.com")) {
+
+    let match = url.match(/[-\w]{25,}/);
+    return match ? match[0] : "";
+  }
+
+  // Si ya es un ID suelto
+  return url;
+}
+
+
+function filterZodiac(sign) {
+
+  document.getElementById("zodiacButtons").style.display = "none";
 
   const filtered =
-    window.allCelebrities
-    .filter(c =>
-      c.ZodiacSign === sign
+    window.allCelebrities.filter(c =>
+      c.ZodiacSign &&
+      c.ZodiacSign.trim().toLowerCase() === sign.trim().toLowerCase()
     );
 
   const results =
-    document.getElementById(
-      "zodiacResults"
-    );
+    document.getElementById("zodiacResults");
 
   let html = `
-
-    <button
-      class="back-btn"
-      onclick="showZodiac()"
-    >
+    <button class="back-btn" onclick="showZodiac()">
       ← Back to Zodiac Signs
     </button>
 
-    <h2>
-      ${sign}
-    </h2>
+    <h2>${sign}</h2>
   `;
 
   filtered.forEach(celeb => {
@@ -90,37 +84,26 @@ function filterZodiac(
     html += `
       <div
         class="mini-card"
-        onclick="
-          window.location.href=
-          'profile.html?id=${celeb.ID}'
-        "
+        onclick="window.location.href='profile.html?id=${celeb.ID}'"
       >
 
         <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
->
+          src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
+        >
 
-        <p>
-          ${celeb.Name}
-        </p>
+        <p>${celeb.Name}</p>
 
       </div>
     `;
   });
 
-  results.innerHTML =
-    html;
+  results.innerHTML = html;
 }
 
-function showZodiac(){
 
-  document.getElementById(
-    "zodiacButtons"
-  ).style.display =
-    "flex";
+function showZodiac() {
 
-  document.getElementById(
-    "zodiacResults"
-  ).innerHTML =
-    "";
+  document.getElementById("zodiacButtons").style.display = "flex";
+
+  document.getElementById("zodiacResults").innerHTML = "";
 }

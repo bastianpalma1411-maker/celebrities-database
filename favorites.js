@@ -38,7 +38,7 @@ else{
       >
 
         <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+  src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
 >
 
         <p>${celeb.Name}</p>

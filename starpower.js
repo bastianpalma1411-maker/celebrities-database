@@ -1,3 +1,14 @@
+
+import { db } from "./firebase.js";
+
+import {
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  collection
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
 const SHEET_ID =
   "1wWydsOHKeGV34m50w7FdQLnVFd2r1hvt342hL6gCHgc";
 
@@ -9,110 +20,88 @@ const url =
 
 let celebrities = [];
 
+// IMAGE FIX
+function getImageId(url){
+
+  if(!url) return "";
+
+  const idParam = url.match(/[?&]id=([^&]+)/);
+  if(idParam) return idParam[1];
+
+  const dMatch = url.match(/\/d\/([^/]+)/);
+  if(dMatch) return dMatch[1];
+
+  const thumbMatch = url.match(/thumbnail\?id=([^&]+)/);
+  if(thumbMatch) return thumbMatch[1];
+
+  return "";
+}
+
+// FETCH DATA
 fetch(url)
 .then(res => res.json())
 .then(data => {
 
   celebrities = data;
-
-  updateRanking();
+  updateRanking(true); // orden inicial
 });
 
-function updateRanking(){
+// 🔥 UPDATE RANKING (SOLO CUANDO TÚ QUIERES)
+window.updateRanking = async function(forceSort = true){
 
-  const powers =
-    JSON.parse(
-      localStorage.getItem(
-        "starPowers"
-      )
-    ) || {};
+  const powers = {};
 
-  const ranked =
-    celebrities
-    .map(celeb => {
-
-      return {
-
-        ...celeb,
-
-        points:
-          powers[
-            celeb.ID
-          ] || 0
-      };
-    })
-    .sort((a,b) =>
-      b.points - a.points
-    );
-
-  renderRanking(
-    ranked
+  const snapshot = await getDocs(
+    collection(db, "starPowers")
   );
-}
 
+  snapshot.forEach(docSnap => {
+    powers[docSnap.id] = docSnap.data().points || 0;
+  });
+
+  let ranked = celebrities.map(celeb => ({
+    ...celeb,
+    points: powers[celeb.ID] || 0
+  }));
+
+  if(forceSort){
+    ranked.sort((a, b) => b.points - a.points);
+  }
+
+  renderRanking(ranked);
+};
+
+// RENDER
 function renderRanking(data){
 
-  const grid =
-    document.getElementById(
-      "rankingGrid"
-    );
+  const grid = document.getElementById("rankingGrid");
 
   let html = "";
 
-  data.forEach(
-    (celeb,index) => {
+  data.forEach((celeb, index) => {
 
     html += `
-
-      <div
-        class="card"
-        onclick="
-          window.location.href=
-          'profile.html?id=${celeb.ID}'
-        "
+      <div class="card"
+        onclick="window.location.href='profile.html?id=${celeb.ID}'"
       >
 
-        <img
-          src="
-https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300
-          "
-        >
+        <img src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300">
 
         <div class="card-info">
 
-          <h3>
-            #${index + 1}
-            ${celeb.Name}
-          </h3>
+          <h3>#${index + 1} ${celeb.Name}</h3>
 
-          <p
-             id="points-${celeb.ID}"
-            >
-             ⭐ ${celeb.points}
-             points
+          <p id="points-${celeb.ID}">
+            ⭐ ${celeb.points} points
           </p>
 
-          <p>
-            ${celeb.Occupation}
-          </p>
+          <p>${celeb.Occupation}</p>
 
-          <button
-            class="star-btn"
-            onclick="
-              event.stopPropagation();
-              boostCelebrity('${celeb.ID}')
-            "
-          >
+          <button onclick="event.stopPropagation(); boostCelebrity('${celeb.ID}')">
             ⭐ Boost
           </button>
 
-          <button
-            class="remove-star-btn"
-            onclick="
-              event.stopPropagation();
-              removeBoost('${celeb.ID}')
-            "
-          >
+          <button onclick="event.stopPropagation(); removeBoost('${celeb.ID}')">
             ➖ Remove
           </button>
 
@@ -122,66 +111,52 @@ https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300
     `;
   });
 
-  grid.innerHTML =
-    html;
+  grid.innerHTML = html;
 }
 
-function boostCelebrity(id){
+// 🔥 BOOST (NO REORDENA)
+window.boostCelebrity = async function(id){
 
-  const powers =
-    JSON.parse(
-      localStorage.getItem(
-        "starPowers"
-      )
-    ) || {};
+  const ref = doc(db, "starPowers", id);
 
-  powers[id] =
-    (powers[id] || 0) + 1;
+  const snap = await getDoc(ref);
 
-  localStorage.setItem(
-    "starPowers",
-    JSON.stringify(powers)
-  );
+  let current = 0;
 
-  // UPDATE ONLY TEXT
-  const pointsElement =
-    document.getElementById(
-      `points-${id}`
-    );
-
-  pointsElement.textContent =
-    `⭐ ${powers[id]} points`;
-}
-
-function removeBoost(id){
-
-  const powers =
-    JSON.parse(
-      localStorage.getItem(
-        "starPowers"
-      )
-    ) || {};
-
-  if(
-    !powers[id]
-    ||
-    powers[id] <= 0
-  ){
-    return;
+  if(snap.exists()){
+    current = snap.data().points || 0;
   }
 
-  powers[id]--;
+  await setDoc(ref, {
+    points: current + 1
+  });
 
-  localStorage.setItem(
-    "starPowers",
-    JSON.stringify(powers)
-  );
+  // SOLO ACTUALIZA TEXTO (NO REORDER)
+  const el = document.getElementById(`points-${id}`);
+  if(el){
+    el.textContent = `⭐ ${current + 1} points`;
+  }
+};
 
-  const pointsElement =
-  document.getElementById(
-    `points-${id}`
-  );
+// 🔥 REMOVE (NO REORDENA)
+window.removeBoost = async function(id){
 
-pointsElement.textContent =
-  `⭐ ${powers[id]} points`;
-}
+  const ref = doc(db, "starPowers", id);
+
+  const snap = await getDoc(ref);
+
+  if(!snap.exists()) return;
+
+  let current = snap.data().points || 0;
+
+  if(current <= 0) return;
+
+  await setDoc(ref, {
+    points: current - 1
+  });
+
+  const el = document.getElementById(`points-${id}`);
+  if(el){
+    el.textContent = `⭐ ${current - 1} points`;
+  }
+};

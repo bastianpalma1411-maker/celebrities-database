@@ -5,17 +5,11 @@
 
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Find Birthdays</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -23,14 +17,9 @@
 
   <header>
 
-    <h1>
-      🎂 Find Birthdays
-    </h1>
+    <h1>🎂 Find Birthdays</h1>
 
-    <a
-      href="index.html"
-      class="home-btn"
-    >
+    <a href="index.html" class="home-btn">
       🏠 Home
     </a>
 
@@ -38,69 +27,49 @@
 
   <main>
 
+    <!-- 🔥 TABS DE MODOS -->
+    <div class="birthday-tabs">
+
+      <button onclick="setMode('birthday')">
+        🎂 Birthdays
+      </button>
+
+      <button onclick="setMode('birthYear')">
+        🍼 Birth Year
+      </button>
+
+      <button onclick="setMode('deathYear')">
+        ⚰️ Death Year
+      </button>
+
+    </div>
+
+    <!-- 🔥 SEARCH ORIGINAL (SOLO PARA BIRTHDAY MODE) -->
     <div class="birthday-search-box">
 
-      <select id="birthDay">
-      </select>
+      <select id="birthDay"></select>
 
       <select id="birthMonth">
 
-        <option value="1">
-          January
-        </option>
-
-        <option value="2">
-          February
-        </option>
-
-        <option value="3">
-          March
-        </option>
-
-        <option value="4">
-          April
-        </option>
-
-        <option value="5">
-          May
-        </option>
-
-        <option value="6">
-          June
-        </option>
-
-        <option value="7">
-          July
-        </option>
-
-        <option value="8">
-          August
-        </option>
-
-        <option value="9">
-          September
-        </option>
-
-        <option value="10">
-          October
-        </option>
-
-        <option value="11">
-          November
-        </option>
-
-        <option value="12">
-          December
-        </option>
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
 
       </select>
 
     </div>
 
-    <div
-      id="birthdayResults"
-      class="mini-grid"
-    ></div>
+    <!-- 🔥 ZONA DINÁMICA (AÑOS O RESULTADOS) -->
+    <div id="birthdayResults" class="mini-grid results-container"></div>
 
   </main>
 

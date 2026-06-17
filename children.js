@@ -7,6 +7,53 @@ const SHEET_NAME =
 const url =
 `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
+// IMAGE ID FIX
+function getImageId(url){
+
+  if(!url)
+    return "";
+
+  url = url.trim();
+
+  let match =
+    url.match(/[?&]id=([^&]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  match =
+    url.match(/\/d\/([^/]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  match =
+    url.match(/uc\?id=([^&]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  match =
+    url.match(/thumbnail\?id=([^&]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  // si la celda tiene solo el ID
+  if(
+    !url.includes("http") &&
+    url.length > 20
+  ){
+    return url.trim();
+  }
+
+  return "";
+}
+
 fetch(url)
 .then(res => res.json())
 .then(data => {
@@ -113,8 +160,8 @@ function filterChildren(
       >
 
         <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
->
+          src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
+        >
 
         <p>
           ${celeb.Name}

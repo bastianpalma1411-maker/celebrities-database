@@ -7,6 +7,53 @@ const SHEET_NAME =
 const url =
 `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
+// IMAGE ID FIX
+function getImageId(url){
+
+  if(!url)
+    return "";
+
+  url = url.trim();
+
+  let match =
+    url.match(/[?&]id=([^&]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  match =
+    url.match(/\/d\/([^/]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  match =
+    url.match(/uc\?id=([^&]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  match =
+    url.match(/thumbnail\?id=([^&]+)/);
+
+  if(match){
+    return match[1].trim();
+  }
+
+  // Si viene solo el ID
+  if(
+    !url.includes("http") &&
+    url.length > 20
+  ){
+    return url.trim();
+  }
+
+  return "";
+}
+
 // COUNTRY FLAGS
 const countryFlags = {
 
@@ -79,6 +126,7 @@ const countryFlags = {
   "Ukraine":"🇺🇦",
   "United States":"🇺🇸",
   "Uruguay":"🇺🇾",
+  "Uzbekistan":"🇺🇿",
   "Vietnam":"🇻🇳",
   "Wales":"gb-wls",
   "Zanzibar":"🇹🇿",
@@ -121,31 +169,27 @@ fetch(url)
   uniqueCountries
   .forEach(country => {
 
-    const flag =
-      countryFlags[country]
-      || "🌍";
-
     html += `
-  <button
-    class="occupation-btn"
-    onclick="
-      filterCountry(
-        '${country.replace(/'/g,"\\'")}'
-      )
-    "
-  >
+      <button
+        class="occupation-btn"
+        onclick="
+          filterCountry(
+            '${country.replace(/'/g,"\\'")}'
+          )
+        "
+      >
 
-    <img
-      class="country-flag"
-      src="
+        <img
+          class="country-flag"
+          src="
 https://flagcdn.com/24x18/${getCountryCode(country)}.png
-      "
-    >
+          "
+        >
 
-    ${country}
+        ${country}
 
-  </button>
-`;
+      </button>
+    `;
   });
 
   container.innerHTML =
@@ -178,26 +222,26 @@ function filterCountry(
 
   let html = `
 
-  <button
-    class="back-btn"
-    onclick="showCountries()"
-  >
-    ← Back to Countries
-  </button>
-
-  <h2 class="country-title">
-
-    <img
-      class="country-title-flag"
-      src="
-https://flagcdn.com/24x18/${getCountryCode(country)}.png
-      "
+    <button
+      class="back-btn"
+      onclick="showCountries()"
     >
+      ← Back to Countries
+    </button>
 
-    ${country}
+    <h2 class="country-title">
 
-  </h2>
-`;
+      <img
+        class="country-title-flag"
+        src="
+https://flagcdn.com/24x18/${getCountryCode(country)}.png
+        "
+      >
+
+      ${country}
+
+    </h2>
+  `;
 
   filtered.forEach(celeb => {
 
@@ -211,8 +255,8 @@ https://flagcdn.com/24x18/${getCountryCode(country)}.png
       >
 
         <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
->
+          src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
+        >
 
         <p>
           ${celeb.Name}
@@ -290,7 +334,9 @@ function getCountryCode(
     "Nigeria":"ng",
     "North Macedonia":"mk",
     "Northern Ireland":"gb-nir",
+    "Norway":"no",
     "Oman":"om",
+    "Pakistan":"pk",
     "Panama":"pa",
     "Philippines":"ph",
     "Poland":"pl",
@@ -315,6 +361,7 @@ function getCountryCode(
     "Ukraine":"ua",
     "United States":"us",
     "Uruguay":"uy",
+    "Uzbekistan":"uz",
     "Vietnam":"vn",
     "Wales":"gb-wls",
     "Zanzibar":"tz",

@@ -3,60 +3,49 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>
-    Star Power Rankings
-  </title>
+  <title>Star Power Rankings</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
+  <header>
 
-  <div class="top-bar">
+    <div class="top-bar">
 
-    <a
-      href="index.html"
-      class="home-btn"
+      <a href="index.html" class="home-btn">
+        🏠 Home
+      </a>
+
+      <h1>
+        ⭐ Star Power Rankings
+      </h1>
+
+    </div>
+
+  </header>
+
+  <main>
+
+    <!-- BOTÓN DE UPDATE RANKING (MANUAL CONTROL) -->
+    <button
+      id="updateRankingBtn"
+      onclick="updateRanking()"
     >
-      🏠 Home
-    </a>
+      🔄 Update Ranking
+    </button>
 
-    <h1>
-      ⭐ Star Power Rankings
-    </h1>
+    <!-- GRID ÚNICO (IMPORTANTE: SIN DUPLICADOS) -->
+    <div id="rankingGrid"></div>
 
-  </div>
+  </main>
 
-</header>
-
-<main>
-
-<button
-  id="updateRankingBtn"
-  onclick="updateRanking()"
->
-  🔄 Update Ranking
-</button>
-
-<div id="rankingGrid"></div>
-
-  <div id="rankingGrid">
-  </div>
-
-</main>
-
-<script src="starpower.js">
-</script>
+  <!-- STARPOWER SCRIPT -->
+  <script type="module" src="starpower.js"></script>
 
 </body>
+
 </html>

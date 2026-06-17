@@ -1,3 +1,12 @@
+
+import { db } from "./firebase.js";
+
+import {
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
 const SHEET_ID =
   "1wWydsOHKeGV34m50w7FdQLnVFd2r1hvt342hL6gCHgc";
 
@@ -7,125 +16,45 @@ const SHEET_NAME =
 const url =
   `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
-let celeb;
-
-const countryFlags = {
-
-  "Argentina":"🇦🇷",
-  "Australia":"🇦🇺",
-  "Austria":"🇦🇹",
-  "Barbados":"🇧🇧",
-  "Belgium":"🇧🇪",
-  "Benin":"🇧🇯",
-  "Bermuda":"🇧🇲",
-  "Brazil":"🇧🇷",
-  "Bulgaria":"🇧🇬",
-  "Cameroon":"🇨🇲",
-  "Canada":"🇨🇦",
-  "Chile":"🇨🇱",
-  "China":"🇨🇳",
-  "Colombia":"🇨🇴",
-  "Croatia":"🇭🇷",
-  "Cuba":"🇨🇺",
-  "Czech Republic":"🇨🇿",
-  "Denmark":"🇩🇰",
-  "Egypt":"🇪🇬",
-  "England":"gb-eng",
-  "France":"🇫🇷",
-  "Georgia":"🇬🇪",
-  "Germany":"🇩🇪",
-  "Guatemala":"🇬🇹",
-  "Hong Kong":"🇭🇰",
-  "Iceland":"🇮🇸",
-  "India":"🇮🇳",
-  "Ireland":"🇮🇪",
-  "Israel":"🇮🇱",
-  "Italy":"🇮🇹",
-  "Ivory Coast":"🇨🇮",
-  "Jamaica":"🇯🇲",
-  "Japan":"🇯🇵",
-  "Jersey":"🇯🇪",
-  "Kosovo":"🇽🇰",
-  "Lebanon":"🇱🇧",
-  "Malaysia":"🇲🇾",
-  "Mexico":"🇲🇽",
-  "Monaco":"🇲🇨",
-  "Morocco":"🇲🇦",
-  "Netherlands":"🇳🇱",
-  "New Zealand":"🇳🇿",
-  "Nigeria":"🇳🇬",
-  "North Macedonia":"🇲🇰",
-  "Northern Ireland":"gb-nir",
-  "Norway":"🇳🇴",
-  "Oman":"🇴🇲",
-  "Pakistan":"🇵🇰",
-  "Panama":"🇵🇦",
-  "Philippines":"🇵🇭",
-  "Poland":"🇵🇱",
-  "Portugal":"🇵🇹",
-  "Puerto Rico":"🇵🇷",
-  "Romania":"🇷🇴",
-  "Russia":"🇷🇺",
-  "Scotland":"gb-sct",
-  "Serbia":"🇷🇸",
-  "Singapore":"🇸🇬",
-  "Slovakia":"🇸🇰",
-  "Slovenia":"🇸🇮",
-  "South Africa":"🇿🇦",
-  "South Korea":"🇰🇷",
-  "Spain":"🇪🇸",
-  "Sudan":"🇸🇩",
-  "Sweden":"🇸🇪",
-  "Switzerland":"🇨🇭",
-  "Taiwan":"🇹🇼",
-  "Trinidad and Tobago":"🇹🇹",
-  "Turkey":"🇹🇷",
-  "Ukraine":"🇺🇦",
-  "United States":"🇺🇸",
-  "Uruguay":"🇺🇾",
-  "Vietnam":"🇻🇳",
-  "Wales":"gb-wls",
-  "Zanzibar":"🇹🇿",
-  "Algeria":"🇩🇿",
-  "Ethiopia":"🇪🇹",
-  "Finland":"🇫🇮",
-  "Greece":"🇬🇷",
-  "Haiti":"🇭🇹",
-  "Isle of Man":"🇮🇲",
-  "Dominican Republic":"🇩🇴",
-  "Gibraltar":"🇬🇮",
-  "Iran":"🇮🇷",
-  "Namibia":"🇳🇦",
-  "Somalia":"🇸🇴",
-  "Venezuela":"🇻🇪",
-};
-
 // GET ID FROM URL
 const params =
-  new URLSearchParams(
-    window.location.search
-  );
+  new URLSearchParams(window.location.search);
 
 const celebId =
   params.get("id");
 
-// FORMAT DATE
+let celeb;
+let currentCelebrityId = null;
+
+// IMAGE FIX
+function getImageId(url){
+
+  if(!url) return "";
+
+  const idParam = url.match(/[?&]id=([^&]+)/);
+  if(idParam) return idParam[1];
+
+  const dMatch = url.match(/\/d\/([^/]+)/);
+  if(dMatch) return dMatch[1];
+
+  const thumbMatch = url.match(/thumbnail\?id=([^&]+)/);
+  if(thumbMatch) return thumbMatch[1];
+
+  return "";
+}
+
+// FORMAT DATE (BONITO)
 function formatDate(dateString){
 
-  if(!dateString)
-    return "Unknown";
+  if(!dateString) return "Unknown";
 
-  const date =
-    new Date(dateString);
+  const date = new Date(dateString);
 
-  return date.toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    }
-  );
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
 }
 
 // FETCH DATA
@@ -133,25 +62,15 @@ fetch(url)
 .then(res => res.json())
 .then(data => {
 
-  celeb =
-    data.find(c =>
-      c.ID === celebId
-    );
+  celeb = data.find(c => c.ID === celebId);
 
   if(!celeb){
-
-    document.body.innerHTML =
-      "<h1>Celebrity not found</h1>";
-
+    document.body.innerHTML = "<h1>Celebrity not found</h1>";
     return;
   }
 
   renderProfile(celeb);
-
-loadStarPower(
-  celeb.ID
-);
-
+  loadStarPower(celeb.ID);
 });
 
 // RENDER PROFILE
@@ -164,96 +83,67 @@ function renderProfile(celeb){
   
     <div class="profile-container">
 
-  <div class="left-column">
+      <div class="left-column">
 
-  <img
-    class="profile-img"
-    src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
-  >
+        <img
+          class="profile-img"
+          src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
+        >
 
-  <div class="star-power-box">
+        <div class="star-power-box">
 
-    <h3>⭐ Star Power</h3>
+          <h3>⭐ Star Power</h3>
 
-    <p id="starPowerCount">
-      0 points
-    </p>
+          <p id="starPowerCount">0 points</p>
 
-    <button
-      id="boostBtn"
-      onclick="increaseStarPower()"
-    >
-      ⭐ Boost
-    </button>
+          <button onclick="increaseStarPower()">
+            ⭐ Boost
+          </button>
 
-    <button
-      id="removeBoostBtn"
-      onclick="decreaseStarPower()"
-    >
-      ➖ Remove
-    </button>
+          <button onclick="decreaseStarPower()">
+            ➖ Remove
+          </button>
 
-  </div>
+        </div>
 
-</div>
+      </div>
 
-  <div class="profile-info">
+      <div class="profile-info">
 
         <h1>${celeb.Name}</h1>
 
         <h2>ID #${celeb.ID}</h2>
 
-        <p>
-          <strong>Age:</strong>
-          ${celeb.Age}
-        </p>
+        <p><strong>Age:</strong> ${celeb.Age}</p>
 
-        <p>
-          <strong>Birth Date:</strong>
-          ${formatDate(celeb.BirthDate)}
-        </p>
+        <p><strong>Birth Date:</strong> ${formatDate(celeb.BirthDate)}</p>
 
         ${
           celeb.DeathDate
-          ? `
-            <p>
-              <strong>Death Date:</strong>
-              ${formatDate(celeb.DeathDate)}
-            </p>
-          `
-          : ""
+            ? `<p><strong>Death Date:</strong> ${formatDate(celeb.DeathDate)}</p>`
+            : ""
         }
 
+        <p><strong>Occupation:</strong> ${celeb.Occupation}</p>
+
         <p>
-          <strong>Occupation:</strong>
-          ${celeb.Occupation}
+          <strong>Birth Place:</strong>
+          ${
+            celeb.BirthPlace
+              ? `
+                <img
+                  class="birthplace-flag"
+                  src="https://flagcdn.com/24x18/${getCountryCode(celeb.BirthPlace)}.png"
+                >
+                ${celeb.BirthPlace}
+              `
+              : "—"
+          }
         </p>
 
-        <p>
-  <strong>Birth Place:</strong>
+        <p><strong>Children:</strong> ${celeb.Children || "—"}</p>
 
-  ${
-    celeb.BirthPlace
-      ? `
-        <img
-          class="birthplace-flag"
-          src="https://flagcdn.com/24x18/${getCountryCode(celeb.BirthPlace)}.png"
-        >
-        ${celeb.BirthPlace}
-      `
-      : "—"
-  }
-</p>
-
-        <p>
-          <strong>Children:</strong>
-          ${celeb.Children || "—"}
-        </p>
-
-        <p>
-          <strong>Zodiac Sign:</strong>
-          ${celeb.ZodiacSign || "—"}
-        </p>
+        <p><strong>Zodiac Sign:</strong> ${celeb.ZodiacSign || "—"}</p>
 
         <button id="favoriteBtn">
           ❤️ Add to Favorites
@@ -266,55 +156,35 @@ function renderProfile(celeb){
 
   // FAVORITES
   const favoriteBtn =
-    document.getElementById(
-      "favoriteBtn"
-    );
+    document.getElementById("favoriteBtn");
 
-  favoriteBtn.addEventListener(
-    "click",
-    () => {
+  favoriteBtn.addEventListener("click", () => {
 
-      let favorites =
-        JSON.parse(
-          localStorage.getItem(
-            "favorites"
-          )
-        ) || [];
+    let favorites =
+      JSON.parse(localStorage.getItem("favorites")) || [];
 
-      const alreadyExists =
-        favorites.some(f =>
-          f.ID === celeb.ID
-        );
+    const exists =
+      favorites.some(f => f.ID === celeb.ID);
 
-      if(alreadyExists){
-
-        alert(
-          "Already in favorites!"
-        );
-
-        return;
-      }
-
-      favorites.push({
-        ID: celeb.ID,
-        Name: celeb.Name,
-        URL: celeb.URL,
-        Occupation:
-          celeb.Occupation
-      });
-
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify(favorites)
-      );
-
-      alert(
-        "Added to favorites!"
-      );
+    if(exists){
+      alert("Already in favorites!");
+      return;
     }
-  );
+
+    favorites.push({
+      ID: celeb.ID,
+      Name: celeb.Name,
+      URL: celeb.URL,
+      Occupation: celeb.Occupation
+    });
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+
+    alert("Added to favorites!");
+  });
 }
 
+// 🌍 FULL COUNTRY CODES (RESTAURADO COMPLETO)
 function getCountryCode(country){
 
   const codes = {
@@ -338,7 +208,12 @@ function getCountryCode(country){
     "Czech Republic":"cz",
     "Denmark":"dk",
     "Egypt":"eg",
+
     "England":"gb-eng",
+    "Scotland":"gb-sct",
+    "Wales":"gb-wls",
+    "Northern Ireland":"gb-nir",
+
     "France":"fr",
     "Georgia":"ge",
     "Germany":"de",
@@ -363,8 +238,6 @@ function getCountryCode(country){
     "New Zealand":"nz",
     "Nigeria":"ng",
     "North Macedonia":"mk",
-    "Northern Ireland":"gb-nir",
-    "Norway":"no",
     "Oman":"om",
     "Pakistan":"pk",
     "Panama":"pa",
@@ -374,7 +247,6 @@ function getCountryCode(country){
     "Puerto Rico":"pr",
     "Romania":"ro",
     "Russia":"ru",
-    "Scotland":"gb-sct",
     "Serbia":"rs",
     "Singapore":"sg",
     "Slovakia":"sk",
@@ -391,8 +263,8 @@ function getCountryCode(country){
     "Ukraine":"ua",
     "United States":"us",
     "Uruguay":"uy",
+    "Uzbekistan":"uz",
     "Vietnam":"vn",
-    "Wales":"gb-wls",
     "Zanzibar":"tz",
     "Algeria":"dz",
     "Ethiopia":"et",
@@ -400,90 +272,68 @@ function getCountryCode(country){
     "Greece":"gr",
     "Haiti":"ht",
     "Isle of Man":"im",
+    "Norway":"no",
     "Dominican Republic":"do",
     "Gibraltar":"gi",
     "Iran":"ir",
     "Namibia":"na",
     "Somalia":"so",
-    "Venezuela":"ve",
+    "Venezuela":"ve"
   };
 
   return codes[country] || "un";
 }
 
-// STAR POWER
-
-let currentCelebrityId = null;
-
-function loadStarPower(id){
+// 🔥 STAR POWER FIREBASE
+async function loadStarPower(id){
 
   currentCelebrityId = id;
 
-  const powers =
-    JSON.parse(
-      localStorage.getItem(
-        "starPowers"
-      )
-    ) || {};
+  const ref = doc(db, "starPowers", id);
+  const snap = await getDoc(ref);
 
-  const points =
-    powers[id] || 0;
+  let points = 0;
 
-  document.getElementById(
-    "starPowerCount"
-  ).textContent =
+  if(snap.exists()){
+    points = snap.data().points || 0;
+  }
+
+  document.getElementById("starPowerCount").textContent =
     `${points} points`;
 }
 
-function increaseStarPower(){
+// BOOST
+window.increaseStarPower = async function(){
 
-  const powers =
-    JSON.parse(
-      localStorage.getItem(
-        "starPowers"
-      )
-    ) || {};
+  const ref = doc(db, "starPowers", currentCelebrityId);
 
-  powers[currentCelebrityId] =
-    (powers[currentCelebrityId] || 0)
-    + 1;
+  const snap = await getDoc(ref);
 
-  localStorage.setItem(
-    "starPowers",
-    JSON.stringify(powers)
-  );
+  let current = snap.exists() ? snap.data().points || 0 : 0;
 
-  loadStarPower(
-    currentCelebrityId
-  );
-}
+  await setDoc(ref, {
+    points: current + 1
+  });
 
-function decreaseStarPower(){
+  loadStarPower(currentCelebrityId);
+};
 
-  const powers =
-    JSON.parse(
-      localStorage.getItem(
-        "starPowers"
-      )
-    ) || {};
+// REMOVE
+window.decreaseStarPower = async function(){
 
-  if(
-    !powers[currentCelebrityId]
-    ||
-    powers[currentCelebrityId]
-    <= 0
-  ){
-    return;
-  }
+  const ref = doc(db, "starPowers", currentCelebrityId);
 
-  powers[currentCelebrityId]--;
+  const snap = await getDoc(ref);
 
-  localStorage.setItem(
-    "starPowers",
-    JSON.stringify(powers)
-  );
+  if(!snap.exists()) return;
 
-  loadStarPower(
-    currentCelebrityId
-  );
-}
+  let current = snap.data().points || 0;
+
+  if(current <= 0) return;
+
+  await setDoc(ref, {
+    points: current - 1
+  });
+
+  loadStarPower(currentCelebrityId);
+};

@@ -7,6 +7,35 @@ const SHEET_NAME =
 const url =
   `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
+function getImageId(url){
+
+  if(!url)
+    return "";
+
+  const idParam =
+    url.match(/[?&]id=([^&]+)/);
+
+  if(idParam){
+    return idParam[1];
+  }
+
+  const dMatch =
+    url.match(/\/d\/([^/]+)/);
+
+  if(dMatch){
+    return dMatch[1];
+  }
+
+  const thumbMatch =
+    url.match(/thumbnail\?id=([^&]+)/);
+
+  if(thumbMatch){
+    return thumbMatch[1];
+  }
+
+  return "";
+}
+
 let celebrities = [];
 
 // FORMAT DATE
@@ -39,7 +68,7 @@ fetch(url)
   const randomCelebs =
     [...data]
     .sort(() => 0.5 - Math.random())
-    .slice(0,20);
+    .slice(0,12);
 
   renderCelebrities(
     randomCelebs
@@ -162,7 +191,7 @@ function renderCelebrities(
       >
 
         <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+  src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
 >
 
         <div class="card-info">
@@ -294,7 +323,7 @@ function renderSpecialSection(
       >
 
         <img
-  src="https://lh3.googleusercontent.com/d/${celeb.URL.split('id=')[1]}=w300"
+  src="https://lh3.googleusercontent.com/d/${getImageId(celeb.URL)}=w300"
 >
 
         <div class="card-info">
