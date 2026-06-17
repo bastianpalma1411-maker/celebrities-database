@@ -1,3 +1,10 @@
+import { db } from "./firebase.js";
+
+import {
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
 const SHEET_ID =
   "1wWydsOHKeGV34m50w7FdQLnVFd2r1hvt342hL6gCHgc";
 
@@ -37,6 +44,13 @@ function getImageId(url){
 }
 
 let celebrities = [];
+function waitCelebritiesReady(callback) {
+  if (celebrities && celebrities.length > 0) {
+    callback();
+  } else {
+    setTimeout(() => waitCelebritiesReady(callback), 300);
+  }
+}
 
 // FORMAT DATE
 function formatDate(dateString){
@@ -165,6 +179,9 @@ fetch(url)
     oldest,
     "oldest"
   );
+
+ waitCelebritiesReady(loadTrending);
+
 });
 
 // RENDER MAIN GRID
@@ -426,4 +443,45 @@ function toggleMenu(){
     .getElementById("menu")
     .classList
     .toggle("active");
+}
+
+async function loadTrending() {
+
+  const container = document.getElementById("trendingToday");
+  if (!container) return;
+
+  try {
+
+    const snapshot = await getDocs(collection(db, "starPowers"));
+
+    const points = {};
+
+    snapshot.forEach(docSnap => {
+      points[docSnap.id] = docSnap.data()?.points || 0;
+    });
+
+    const ranked = celebrities
+      .map(c => ({
+        ...c,
+        points: points[c.ID] || 0
+      }))
+      .sort((a, b) => b.points - a.points)
+      .slice(0, 20);
+
+    container.innerHTML = ranked.map(c => `
+      <div class="mini-card"
+        onclick="window.location.href='profile.html?id=${c.ID}'">
+
+        <img src="https://lh3.googleusercontent.com/d/${getImageId(c.URL)}=w300">
+        <p class="trend-name">${c.Name}</p>
+        <p class="trend-occupation">${c.Occupation || ""}</p>
+        <small>⭐ ${c.points}</small>
+
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error("Trending error:", err);
+    container.innerHTML = `<p style="opacity:.6">Trending unavailable</p>`;
+  }
 }

@@ -492,22 +492,6 @@ main{
   margin:12px 0;
 }
 
-#starPowerBtn{
-  border:none;
-  background:#f5c542;
-  color:black;
-  padding:12px 18px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:16px;
-  font-weight:bold;
-  transition:0.2s;
-}
-
-#starPowerBtn:hover{
-  transform:scale(1.05);
-}
-
 #rankingGrid{
   display:grid;
   grid-template-columns:
@@ -668,22 +652,6 @@ main{
   }
 }
 
-.star-btn,
-.remove-star-btn{
-  margin-top:8px;
-  width:100%;
-  padding:8px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:14px;
-}
-
-.star-btn:hover,
-.remove-star-btn:hover{
-  transform:scale(1.03);
-}
-
 #updateRankingBtn{
   margin:20px;
   padding:12px 20px;
@@ -775,4 +743,155 @@ main{
   text-align: center;
   padding: 30px;
   opacity: 0.7;
+}
+
+.star-btn,
+.remove-star-btn {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease;
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* BOOST */
+.star-btn {
+  background: linear-gradient(135deg, #ffd700, #ffb800);
+  color: #111;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.star-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+/* REMOVE */
+.remove-star-btn {
+  background: linear-gradient(135deg, #ff4d4d, #d60000);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.25);
+}
+
+.remove-star-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
+}
+
+.star-btn:active,
+.remove-star-btn:active {
+  transform: scale(0.95);
+}
+
+/* =========================
+   STARPOWER BUTTON FIX (BIG UI)
+========================= */
+
+#rankingGrid .star-btn,
+#rankingGrid .remove-star-btn {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s ease;
+}
+
+/* ⭐ BOOST */
+#rankingGrid .star-btn {
+  background: linear-gradient(135deg, #ffd700, #ffb800);
+  color: #111;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+}
+
+/* ➖ REMOVE */
+#rankingGrid .remove-star-btn {
+  background: linear-gradient(135deg, #ff4d4d, #d60000);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
+}
+
+/* HOVER EFECTO MÁS SUAVE */
+#rankingGrid .star-btn:hover,
+#rankingGrid .remove-star-btn:hover {
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+/* CLICK FEEL */
+#rankingGrid .star-btn:active,
+#rankingGrid .remove-star-btn:active {
+  transform: scale(0.96);
+}
+
+#trendingToday {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+/* cada card más “protagonista” */
+#trendingToday .mini-card {
+  min-width: 180px;
+  max-width: 200px;
+  flex-shrink: 0;
+  text-align: left;
+  scroll-snap-align: start;
+  background: #222;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+#trendingToday .mini-card:hover {
+  transform: scale(1.04);
+}
+
+/* imagen grande tipo tarjeta principal */
+#trendingToday .mini-card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+/* nombre más visible */
+#trendingToday .mini-card p {
+  font-size: 16px;
+  margin: 10px 10px 5px 10px;
+}
+
+/* puntos */
+#trendingToday .mini-card small {
+  display: block;
+  margin: 0 10px 12px 10px;
+  font-size: 13px;
+  color: #ffd54a;
+}
+
+#trendingToday::-webkit-scrollbar {
+  height: 8px;
+}
+
+#trendingToday::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+#trendingToday .mini-card .trend-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 10px 2px 10px;
+}
+
+#trendingToday .mini-card .trend-occupation {
+  font-size: 16px;
+  color: #aaa;
+  margin: 0 10px 6px 10px;
 }
