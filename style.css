@@ -895,3 +895,25 @@ main{
   color: #aaa;
   margin: 0 10px 6px 10px;
 }
+
+.about-box{
+  max-width:900px;
+  margin:auto;
+  padding:30px;
+  background:#1b1b1b;
+  border-radius:20px;
+  line-height:1.8;
+}
+
+.about-box h2{
+  margin-top:0;
+  margin-bottom:20px;
+}
+
+.about-box ul{
+  padding-left:25px;
+}
+
+.about-box li{
+  margin-bottom:8px;
+}
