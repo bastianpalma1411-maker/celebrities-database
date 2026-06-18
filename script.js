@@ -437,7 +437,7 @@ function renderSpecialSection(
     html;
 }
 
-function toggleMenu(){
+window.toggleMenu = function(){
 
   document
     .getElementById("menu")
