@@ -2,7 +2,11 @@ import { db } from "./firebase.js";
 
 import {
   collection,
-  getDocs
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const SHEET_ID =
@@ -181,18 +185,17 @@ fetch(url)
   );
 
  waitCelebritiesReady(loadTrending);
+ registerVisit();
 
 });
 
 // RENDER MAIN GRID
-function renderCelebrities(
-  data
-){
+function renderCelebrities(data){
 
   const grid =
-    document.getElementById(
-      "grid"
-    );
+    document.getElementById("grid");
+
+  if(!grid) return;
 
   let html = "";
 
@@ -232,15 +235,18 @@ function renderCelebrities(
 }
 
 // SEARCH
-document
-.getElementById("search")
-.addEventListener(
-  "input",
-  e => {
+const searchInput =
+  document.getElementById("search");
 
-  const value =
-    e.target.value
-    .toLowerCase();
+if(searchInput){
+
+  searchInput.addEventListener(
+    "input",
+    e => {
+
+      const value =
+        e.target.value
+        .toLowerCase();
 
   // SHOW / HIDE
   document
@@ -310,10 +316,11 @@ document
       .includes(value)
     );
 
-  renderCelebrities(
+  renderCelebrities( 
     filtered
   );
 });
+}
 
 // SPECIAL SECTIONS
 function renderSpecialSection(
@@ -325,6 +332,8 @@ function renderSpecialSection(
     document.getElementById(
       elementId
     );
+
+  if(!container) return;
 
   let html = "";
 
@@ -485,3 +494,56 @@ async function loadTrending() {
     container.innerHTML = `<p style="opacity:.6">Trending unavailable</p>`;
   }
 }
+
+async function registerVisit() {
+
+  const today =
+    new Date().toDateString();
+
+  const lastVisit =
+    localStorage.getItem(
+      "lastVisit"
+    );
+
+  const ref =
+    doc(
+      db,
+      "siteStats",
+      "visits"
+    );
+
+  // solo suma si nunca visitó hoy
+  if(lastVisit !== today){
+
+    await updateDoc(
+      ref,
+      {
+        count: increment(1)
+      }
+    );
+
+    localStorage.setItem(
+      "lastVisit",
+      today
+    );
+  }
+
+const snap =
+  await getDoc(ref);
+
+const counter =
+  document.getElementById(
+    "visitCounter"
+  );
+
+if(counter){
+
+  counter.textContent =
+    snap.data().count;
+}
+
+console.log(
+  "Visits:",
+  snap.data().count
+);
+ }
