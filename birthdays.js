@@ -172,7 +172,7 @@ function renderBirthYears(){
   const years = getBirthYears();
 
   let html = `
-    <div class="section-title">🍼 Birth Years</div>
+    <div class="section-title">Birth Years</div>
     <div class="button-grid">
   `;
 
@@ -221,7 +221,7 @@ function renderDeathYears(){
   const years = getDeathYears();
 
   let html = `
-    <div class="section-title">⚰️ Death Years</div>
+    <div class="section-title">Death Years</div>
     <div class="button-grid">
   `;
 
