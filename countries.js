@@ -145,6 +145,11 @@ const countryFlags = {
   "Namibia":"🇳🇦",
   "Somalia":"🇸🇴",
   "Venezuela":"🇻🇪",
+  "Bosnia and Herzegovina":"🇧🇦",
+  "Hungary":"🇭🇺",
+  "Latvia":"🇱🇻",
+  "Nicaragua":"🇳🇮",
+  "Tunisia":"🇹🇳",
 };
 
 fetch(url)
@@ -379,6 +384,11 @@ function getCountryCode(
     "Namibia":"na",
     "Somalia":"so",
     "Venezuela":"ve",
+    "Bosnia and Herzegovina":"ba",
+    "Hungary":"hu",
+    "Latvia":"lv",
+    "Nicaragua":"ni",
+    "Tunisia":"tn", 
   };
 
   return codes[country]

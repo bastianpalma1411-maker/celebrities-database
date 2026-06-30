@@ -208,12 +208,10 @@ function getCountryCode(country){
     "Czech Republic":"cz",
     "Denmark":"dk",
     "Egypt":"eg",
-
     "England":"gb-eng",
     "Scotland":"gb-sct",
     "Wales":"gb-wls",
     "Northern Ireland":"gb-nir",
-
     "France":"fr",
     "Georgia":"ge",
     "Germany":"de",
@@ -278,7 +276,12 @@ function getCountryCode(country){
     "Iran":"ir",
     "Namibia":"na",
     "Somalia":"so",
-    "Venezuela":"ve"
+    "Venezuela":"ve",
+    "Bosnia and Herzegovina":"ba",
+    "Hungary":"hu",
+    "Latvia":"lv",
+    "Nicaragua":"ni",
+    "Tunisia":"tn",
   };
 
   return codes[country] || "un";
