@@ -1,3 +1,11 @@
+import { db } from "./firebase.js";
+
+import {
+  collection,
+  getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
 const SHEET_ID =
   "1wWydsOHKeGV34m50w7FdQLnVFd2r1hvt342hL6gCHgc";
 
@@ -55,7 +63,7 @@ let mode = "birthday";
 // =======================
 fetch(url)
 .then(res => res.json())
-.then(data => {
+.then(async data => {
 
   celebrities = data;
 
@@ -271,9 +279,20 @@ function renderResults(list){
         </div>
 
         <div class="card-text">
-          <p class="name">${celeb.Name}</p>
-          <small class="occupation">${celeb.Occupation}</small>
-        </div>
+
+  <p class="name">
+    ${celeb.Name}
+  </p>
+
+  <small class="occupation">
+    ${
+      celeb.DeathDate
+      ? `Died at age ${celeb.Age}`
+      : `Age ${celeb.Age}`
+    }
+  </small>
+
+</div>
 
       </div>
     `;

@@ -78,7 +78,7 @@ function formatDate(dateString){
 // FETCH DATA
 fetch(url)
 .then(res => res.json())
-.then(data => {
+.then(async data => {
 
   celebrities = data;
 
@@ -102,29 +102,91 @@ fetch(url)
   const todayMonth =
     today.getMonth() + 1;
 
-  const birthdaysToday =
-    data.filter(c => {
+// BIRTHDAYS TODAY
 
-      if(!c["BirthDate"])
-        return false;
+const birthdaysToday =
+  data.filter(c => {
 
-      const date =
-        new Date(
-          c["BirthDate"]
-        );
+    if(!c["BirthDate"])
+      return false;
 
-      return (
-        date.getDate() ===
-          todayDay &&
-        date.getMonth() + 1 ===
-          todayMonth
+    const date =
+      new Date(
+        c["BirthDate"]
       );
-    });
 
-  renderSpecialSection(
-    birthdaysToday,
-    "birthdays"
+    return (
+      date.getDate() ===
+        todayDay &&
+      date.getMonth() + 1 ===
+        todayMonth
+    );
+  });
+
+// LOAD STAR POWER FROM FIRESTORE
+
+const snapshot =
+  await getDocs(
+    collection(
+      db,
+      "starPowers"
+    )
   );
+
+const powers = {};
+
+snapshot.forEach(doc => {
+
+  powers[
+    doc.id
+  ] =
+    doc.data().points || 0;
+
+});
+
+// ADD POINTS
+
+birthdaysToday.forEach(celeb => {
+
+  celeb.points =
+    powers[
+      celeb.ID
+    ] || 0;
+
+});
+
+// SORT BY STAR POWER
+
+birthdaysToday.sort((a,b)=>{
+
+  const aAlive =
+    !a.DeathDate;
+
+  const bAlive =
+    !b.DeathDate;
+
+  // Primero los vivos
+
+  if(aAlive && !bAlive){
+    return -1;
+  }
+
+  if(!aAlive && bAlive){
+    return 1;
+  }
+
+  // Después ordenar por Star Power
+
+  return b.points - a.points;
+
+});
+
+// RENDER
+
+renderSpecialSection(
+  birthdaysToday,
+  "birthdays"
+);
 
   // RECENTLY DECEASED
   const deceased =
