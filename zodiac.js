@@ -14,13 +14,34 @@ fetch(url)
   const container =
     document.getElementById("zodiacButtons");
 
-  const uniqueSigns =
-    [...new Set(
-      data
+  const zodiacOrder = [
+
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces"
+
+];
+
+const uniqueSigns =
+  [...new Set(
+    data
       .map(c => c.ZodiacSign)
       .filter(Boolean)
-    )]
-    .sort();
+  )]
+  .sort(
+    (a,b)=>
+      zodiacOrder.indexOf(a) -
+      zodiacOrder.indexOf(b)
+  );
 
   let html = "";
 

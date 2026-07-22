@@ -4,8 +4,11 @@ import { db } from "./firebase.js";
 import {
   doc,
   getDoc,
+  getDocs,
+  collection,
   setDoc
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const SHEET_ID =
   "1wWydsOHKeGV34m50w7FdQLnVFd2r1hvt342hL6gCHgc";
@@ -96,12 +99,12 @@ function renderProfile(celeb){
 
           <p id="starPowerCount">0 points</p>
 
+          <p id="starPowerRank">
+          🏆 Loading...
+          </p>
+
           <button onclick="increaseStarPower()">
             ⭐ Boost
-          </button>
-
-          <button onclick="decreaseStarPower()">
-            ➖ Remove
           </button>
 
         </div>
@@ -302,7 +305,62 @@ async function loadStarPower(id){
   }
 
   document.getElementById("starPowerCount").textContent =
-    `${points} points`;
+  `${points} points`;
+
+loadRankingPosition();
+}
+
+async function loadRankingPosition(){
+
+  const snapshot =
+    await getDocs(
+      collection(
+        db,
+        "starPowers"
+      )
+    );
+
+  let ranking = [];
+
+  snapshot.forEach(doc => {
+
+    ranking.push({
+
+      id: doc.id,
+
+      points:
+        doc.data().points || 0
+
+    });
+
+  });
+
+  ranking.sort((a,b)=>
+    b.points - a.points
+  );
+
+  const position =
+    ranking.findIndex(c =>
+      c.id === currentCelebrityId
+    );
+
+  const rankElement =
+    document.getElementById(
+      "starPowerRank"
+    );
+
+  if(position === -1){
+
+    rankElement.textContent =
+      `🏆 Unranked`;
+
+  }else{
+
+    rankElement.textContent =
+      `🏆 Rank #${position + 1} of ${ranking.length}`;
+
+  }
+
 }
 
 // BOOST
@@ -316,26 +374,6 @@ window.increaseStarPower = async function(){
 
   await setDoc(ref, {
     points: current + 1
-  });
-
-  loadStarPower(currentCelebrityId);
-};
-
-// REMOVE
-window.decreaseStarPower = async function(){
-
-  const ref = doc(db, "starPowers", currentCelebrityId);
-
-  const snap = await getDoc(ref);
-
-  if(!snap.exists()) return;
-
-  let current = snap.data().points || 0;
-
-  if(current <= 0) return;
-
-  await setDoc(ref, {
-    points: current - 1
   });
 
   loadStarPower(currentCelebrityId);

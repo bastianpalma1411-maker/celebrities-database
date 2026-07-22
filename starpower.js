@@ -101,10 +101,6 @@ function renderRanking(data){
             ⭐ Boost
           </button>
 
-          <button onclick="event.stopPropagation(); removeBoost('${celeb.ID}')">
-            ➖ Remove
-          </button>
-
         </div>
 
       </div>
@@ -135,28 +131,5 @@ window.boostCelebrity = async function(id){
   const el = document.getElementById(`points-${id}`);
   if(el){
     el.textContent = `⭐ ${current + 1} points`;
-  }
-};
-
-// 🔥 REMOVE (NO REORDENA)
-window.removeBoost = async function(id){
-
-  const ref = doc(db, "starPowers", id);
-
-  const snap = await getDoc(ref);
-
-  if(!snap.exists()) return;
-
-  let current = snap.data().points || 0;
-
-  if(current <= 0) return;
-
-  await setDoc(ref, {
-    points: current - 1
-  });
-
-  const el = document.getElementById(`points-${id}`);
-  if(el){
-    el.textContent = `⭐ ${current - 1} points`;
   }
 };

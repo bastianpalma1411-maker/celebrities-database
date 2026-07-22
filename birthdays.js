@@ -156,6 +156,23 @@ function searchBirthdays(){
     );
   });
 
+filtered.sort((a,b)=>{
+
+  const aAlive = !a.DeathDate;
+  const bAlive = !b.DeathDate;
+
+  if(aAlive && !bAlive){
+    return -1;
+  }
+
+  if(!aAlive && bAlive){
+    return 1;
+  }
+
+  return 0;
+
+});
+
   renderResults(filtered);
 }
 
@@ -265,11 +282,13 @@ function renderResults(list){
   const results =
     document.getElementById("birthdayResults");
 
-  let html = "";
+  let livingHtml = "";
+  let deceasedHtml = "";
 
   list.forEach(celeb => {
 
-    html += `
+    console.log(celeb.Name, celeb.Age);
+    const card = `
       <div class="mini-card fade-in-card"
         onclick="window.location.href='profile.html?id=${celeb.ID}'"
       >
@@ -280,25 +299,65 @@ function renderResults(list){
 
         <div class="card-text">
 
-  <p class="name">
-    ${celeb.Name}
-  </p>
+          <p class="name">
+            ${celeb.Name}
+          </p>
 
-  <small class="occupation">
-    ${
-      celeb.DeathDate
-      ? `Died at age ${celeb.Age}`
-      : `Age ${celeb.Age}`
-    }
-  </small>
+          <small class="occupation">
+            ${celeb.Occupation}
+          </small>
 
-</div>
+          <small class="age">
+            ${
+            celeb.DeathDate
+            ? `Died at age ${celeb.Age}`
+            : `Age ${celeb.Age} years`
+            }
+          </small>
+
+        </div>
 
       </div>
     `;
+
+    if(celeb.DeathDate){
+
+      deceasedHtml += card;
+
+    }else{
+
+      livingHtml += card;
+
+    }
+
   });
 
-  if(list.length === 0){
+  let html = "";
+
+  if(livingHtml){
+
+    html += `
+      <h2 class="results-title living-title">
+        🎉 Living Celebrities
+      </h2>
+
+      ${livingHtml}
+    `;
+  }
+
+  if(deceasedHtml){
+
+    html += `
+      <h2 class="results-title deceased-title">
+        🕊️ Deceased Celebrities
+      </h2>
+
+      ${deceasedHtml}
+    `;
+  }
+
+  if(html === ""){
+
     html = `
       <div class="empty-state">
         <h3>No results found</h3>

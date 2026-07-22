@@ -351,6 +351,21 @@ if(searchInput){
       ? "none"
       : "block";
 
+document
+  .querySelector("#trendingToday")
+  .parentElement
+  .style.display =
+    value
+      ? "none"
+      : "block";
+
+    document
+  .getElementById("randomTitle")
+  .style.display =
+    value
+      ? "none"
+      : "block";
+
   // RESET
   if(value === ""){
 
