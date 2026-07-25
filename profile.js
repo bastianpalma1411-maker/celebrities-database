@@ -357,7 +357,7 @@ async function loadRankingPosition(){
   }else{
 
     rankElement.textContent =
-      `🏆 Rank #${position + 1} of ${ranking.length}`;
+  `🏆 #${position + 1}`;
 
   }
 
