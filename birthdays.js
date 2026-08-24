@@ -114,6 +114,10 @@ function renderModeUI(){
   if(mode === "deathYear"){
     renderDeathYears();
   }
+
+  if(mode === "ages"){
+    renderAgeDecades();
+  }
 }
 
 // =======================
@@ -275,6 +279,123 @@ window.filterDeathYear = function(year){
 };
 
 // =======================
+// 🔥 AGE DECADES
+// =======================
+
+function renderAgeDecades(){
+
+  const decades = [
+    { label: "10s", min: 10, max: 19 },
+    { label: "20s", min: 20, max: 29 },
+    { label: "30s", min: 30, max: 39 },
+    { label: "40s", min: 40, max: 49 },
+    { label: "50s", min: 50, max: 59 },
+    { label: "60s", min: 60, max: 69 },
+    { label: "70s", min: 70, max: 79 },
+    { label: "80s", min: 80, max: 89 },
+    { label: "90s", min: 90, max: 99 },
+    { label: "100s", min: 100, max: 109 }
+  ];
+
+  let html = `
+    <div class="section-title">Ages</div>
+    <div class="button-grid">
+  `;
+
+  decades.forEach(decade => {
+
+    html += `
+      <button
+        class="year-btn"
+        onclick="filterAgeDecade(${decade.min}, ${decade.max})"
+      >
+        ${decade.label}
+      </button>
+    `;
+
+  });
+
+  html += `</div>`;
+
+  document.getElementById("birthdayResults").innerHTML = html;
+}
+
+window.filterAgeDecade = async function(minAge, maxAge){
+
+  const filtered =
+    celebrities.filter(c => {
+
+      const age =
+        parseInt(c.Age);
+
+      return (
+        !isNaN(age) &&
+        age >= minAge &&
+        age <= maxAge
+      );
+
+    });
+
+  // =======================
+  // ⭐ LOAD STAR POWER
+  // =======================
+
+  const snapshot =
+    await getDocs(
+      collection(
+        db,
+        "starPowers"
+      )
+    );
+
+  const powers = {};
+
+  snapshot.forEach(doc => {
+
+    powers[doc.id] =
+      doc.data().points || 0;
+
+  });
+
+  // =======================
+  // ⭐ ADD STAR POWER
+  // =======================
+
+  filtered.forEach(celeb => {
+
+    celeb.points =
+      powers[celeb.ID] || 0;
+
+  });
+
+  // =======================
+  // ⭐ SORT BY STAR POWER
+  // =======================
+
+  filtered.sort((a,b) => {
+
+    // Living first
+    const aAlive = !a.DeathDate;
+    const bAlive = !b.DeathDate;
+
+    if(aAlive && !bAlive){
+      return -1;
+    }
+
+    if(!aAlive && bAlive){
+      return 1;
+    }
+
+    // Then Star Power
+    return b.points - a.points;
+
+  });
+
+  renderResults(filtered);
+
+};
+
+// =======================
 // 🔥 RENDER RESULTS
 // =======================
 function renderResults(list){
@@ -311,7 +432,7 @@ function renderResults(list){
             ${
             celeb.DeathDate
             ? `Died at age ${celeb.Age}`
-            : `Age ${celeb.Age} years`
+            : `Age ${celeb.Age}`
             }
           </small>
 
