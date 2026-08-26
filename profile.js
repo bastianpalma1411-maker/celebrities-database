@@ -144,7 +144,11 @@ function renderProfile(celeb){
           }
         </p>
 
-        <p><strong>Children:</strong> ${celeb.Children || "—"}</p>
+        ${
+  celeb.Children && celeb.Children !== "-"
+    ? `<p><strong>Children:</strong> ${celeb.Children}</p>`
+    : ""
+}
 
         <p><strong>Zodiac Sign:</strong> ${celeb.ZodiacSign || "—"}</p>
 
